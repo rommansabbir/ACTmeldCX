@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ACTmeldCX</string>
+    <string name="type_your_url_here">Type your URL here</string>
+    <string name="go">Go</string>
+    <string name="capture">Capture</string>
+    <string name="history">History</string>
+    <string name="search">Search</string>
+    <string name="url">https://www.google.com/</string>
+</resources>
