@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rommansabbir.actmeldcx.base.History
 import com.rommansabbir.actmeldcx.base.HistoryCacheObject
-import com.rommansabbir.actmeldcx.base.extensions.PermissionManager
+import com.rommansabbir.actmeldcx.base.permission.PermissionManager
 import com.rommansabbir.actmeldcx.usecase.SaveNewHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

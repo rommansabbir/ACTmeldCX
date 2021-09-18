@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.rommansabbir.actmeldcx.R
 import com.rommansabbir.actmeldcx.base.History
-import com.rommansabbir.actmeldcx.base.extensions.customize
 import com.rommansabbir.actmeldcx.base.extensions.doAfterTextChanged
 import com.rommansabbir.actmeldcx.base.extensions.showMessage
 import com.rommansabbir.actmeldcx.databinding.ActivitySecondaryBinding
@@ -18,11 +17,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SecondaryActivity : AppCompatActivity() {
     companion object {
-        private var onLoadPageCallback: (history: History?) -> Unit =
+        // Callback to notify regarding the browsing from the selected history
+        private var onBrowseHistoryCallback: (history: History?) -> Unit =
             {}
 
         fun startActivity(activity: Activity, onLoadPageCallback: (history: History?) -> Unit) {
-            this.onLoadPageCallback = onLoadPageCallback
+            this.onBrowseHistoryCallback = onLoadPageCallback
             activity.startActivity(Intent(activity, SecondaryActivity::class.java))
         }
     }
@@ -38,53 +38,53 @@ class SecondaryActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_secondary)
         binding.lifecycleOwner = this
 
-        //
+        //Handle custom back button action
         binding.asBtnBack.setOnClickListener { onBackPressed() }
+        //Set the adapter to the recyclerview
         binding.asRvHistory.adapter = adapter
 
-        //
-        binding.searchView.customize()
+        //Manage the search history, if query is empty reset the adapter else show the matched history items
         binding.searchView.doAfterTextChanged { query ->
             if (query.isEmpty()) {
-                getHistory()
+                actions.getHistoryList()
             } else {
-                vm.searchHistory(
-                    query,
-                    {
-                        adapter.submitDataSet(it)
-                    },
-                    {
-                        showMessage(it.message.toString())
-                    }
-                )
+                actions.searchHistory(query)
             }
         }
 
-        //
-        getHistory()
-        adapter.deleteCallback = { history ->
-            vm.deleteHistory(history,
-                {
-                    adapter.submitDataSet(it.list)
-                },
-                {
-                    showMessage(it.message.toString())
-                })
-        }
-        adapter.browseCallback = {
-            onLoadPageCallback.invoke(it)
-            onBackPressed()
-        }
+        //Get the history list initially
+        actions.getHistoryList()
+        //Handle history item delete action
+        adapter.deleteCallback = { actions.deleteHistory(it) }
+        //Handle browse history action
+        adapter.browseCallback = { actions.browseHistory(it) }
     }
 
-    private fun getHistory() {
-        vm.getHistoryList(
-            {
-                adapter.submitDataSet(it)
-            },
-            {
-                showMessage(it.message.toString())
-            }
-        )
+    //Manage all logical actions here
+    private val actions: SecondaryActions = object : SecondaryActions {
+        override fun getHistoryList() {
+            vm.getHistoryList(
+                { adapter.submitDataSet(it) },
+                { showMessage(it.message.toString()) }
+            )
+        }
+
+        override fun deleteHistory(history: History) {
+            vm.deleteHistory(history,
+                { adapter.submitDataSet(it.list) },
+                { showMessage(it.message.toString()) })
+        }
+
+        override fun searchHistory(query: String) {
+            vm.searchHistory(
+                query, { adapter.submitDataSet(it) },
+                { showMessage(it.message.toString()) }
+            )
+        }
+
+        override fun browseHistory(history: History) {
+            onBrowseHistoryCallback.invoke(history)
+            onBackPressed()
+        }
     }
 }

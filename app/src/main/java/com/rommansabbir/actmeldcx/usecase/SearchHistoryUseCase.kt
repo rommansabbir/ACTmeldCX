@@ -12,6 +12,11 @@ class SearchHistoryUseCase @Inject constructor(private val repository: LocalHist
         repository.searchHistory(params)
 
     companion object {
+        /**
+         * Execute the request to search [History] from the cache.
+         *
+         * UseCase is the bridge between ViewModel & Repository layer.
+         */
         fun executor(
             useCase: SearchHistoryUseCase,
             query: String,

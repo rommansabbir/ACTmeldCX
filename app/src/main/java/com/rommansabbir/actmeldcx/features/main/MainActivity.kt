@@ -37,25 +37,32 @@ class MainActivity : AppCompatActivity() {
         binding.amPbLoading.visibility = View.GONE
         binding.amPbLoading.isIndeterminate = true
 
-        //
+        //Setup WebView
         val settings = binding.amWebView.settings
         binding.amWebView.webViewClient = webViewClient
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
+
         //
         observeMainUI()
 
-        //
+        //On url update, update the URL input field
         webViewClient.onURLUpdated = {
             binding.amInputUrl.setText(it)
         }
+
+        //When page is loaded, hide the webpage image view
         webViewClient.onPageLoaded = {
             binding.amIvWeb.visibility = View.GONE
             binding.amWebView.visibility = View.VISIBLE
         }
+
+        //Show/Hide progress bar based on webpage loading
         webViewClient.onShowLoading = { showLoading ->
             binding.amPbLoading.visibility = if (showLoading) View.VISIBLE else View.GONE
         }
+
+        //Load a default URL
         actions.actionLoadURL(getString(R.string.url))
     }
 
@@ -78,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Manage all logical actions here
     private val actions: MainActions = object : MainActions {
         override fun actionLoadURL(url: String) {
             when (url.isValidURL()) {

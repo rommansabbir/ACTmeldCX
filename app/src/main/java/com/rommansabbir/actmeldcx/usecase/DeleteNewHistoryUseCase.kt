@@ -13,6 +13,11 @@ class DeleteNewHistoryUseCase @Inject constructor(private val repo: LocalHistory
         repo.deleteHistory(params)
 
     companion object {
+        /**
+         * Execute the request to delete an [History] from the cache.
+         *
+         * UseCase is the bridge between ViewModel & Repository layer.
+         */
         fun executor(
             useCase: DeleteNewHistoryUseCase,
             params: History,

@@ -12,6 +12,11 @@ class GetHistoryUseCase @Inject constructor(private val repository: LocalHistory
         repository.getHistory()
 
     companion object {
+        /**
+         * Execute the request to get list of [History] from the cache.
+         *
+         * UseCase is the bridge between ViewModel & Repository layer.
+         */
         fun executor(
             useCase: GetHistoryUseCase,
             onSuccess: (MutableList<History>) -> Unit,

@@ -13,6 +13,11 @@ class SaveNewHistoryUseCase @Inject constructor(private val repo: LocalHistoryRe
         repo.newHistory(params)
 
     companion object {
+        /**
+         * Execute the request to save a new [History] to the cache.
+         *
+         * UseCase is the bridge between ViewModel & Repository layer.
+         */
         fun executor(
             useCase: SaveNewHistoryUseCase,
             params: History,
